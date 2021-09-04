@@ -11,7 +11,9 @@ h: else   else, ;
 
 h: begin   begin, ;
 h: again   again, ;
+h: for A3 c, begin, 1-, >r, ;
 h: until   branch?, until, ;
 h: while   branch?, while, ;
 h: repeat   repeat, ;
+h: next r>, dup, ^branch?, until, drop, ;
 previous
