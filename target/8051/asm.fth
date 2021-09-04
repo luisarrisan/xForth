@@ -52,6 +52,9 @@ previous
 : data16,   data@ w, ;
 : pc-   here - 2 - ;
 
+\ Compile string
+: s, dup c, dup 8 rshift c, begin swap dup c@ c, 1+ swap 1- dup 0= until 2drop ;
+
 also forth
 
 : range-error   ." Jump range error: " source type abort ;
@@ -102,6 +105,7 @@ format: ldm   op op -5 !mode ;
 format: jump   !jump ;
 format: long   !data16 ;
 format: relative   pc- ?range !data8 ;
+format: 1op_relative op pc- ?range !data8 ;
 
 \ Define registers
 : reg:   create dup , 1+  does> @ ['] reg -addr ;
@@ -149,6 +153,7 @@ previous also assembler definitions
 90 1op subb,
 \ 92 mov,
 \ 93 movc,
+93 0op @dptr_clda,
 \ A0 orl,
 A0 ldm ldm,
 \ A3 inc,
@@ -164,7 +169,7 @@ C0 1op xch,
 \ C3 clr,
 C4 0op swap,
 CB 1op pop,
-\ D0 djnz,
+D0 1op_relative djnz,
 D0 1op xchd,
 \ D2 setb,
 \ D3 setb,
@@ -175,6 +180,7 @@ E0 1op clr,
 F0 1op sta,
 F0 movx xsta,
 F0 1op cpl,
+F0 0op @dptr_xlda,
 
 \ Addessing mode syntax.
 : #     ['] imm-op -addr ;
@@ -199,12 +205,7 @@ drop
 : >resolve   here swap - long? if drop long! else swap c! then ;
 
 \ Special function registers.
-81 constant sp
-82 constant dpl
-83 constant dph
-D0 constant psw
-E0 constant acc
-F0 constant b
+include target/8051/sfr.fth
 
 \ Unconditional jumps.
 : label   here >r get-current ['] assembler set-current r> constant set-current ;
