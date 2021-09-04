@@ -19,7 +19,13 @@ also meta definitions also assembler
 : comp,   short? if acall, else lcall, then ;
 
 : branch?,   s" branch?" "' comp, 0<>, ;
+: ^branch?,  s" branch?" "' comp, 0=, ;
 : dup,   s" dup" "' comp, ;
+: >r, s" >r" "' comp, ;
+: r>, s" r>" "' comp, ;
+: dup, s" dup" "' comp, ;
+: drop, s" drop" "' comp, ;
+: 1-, s" 1-" "' comp, ;
 
 : t-num   dup,  # dptr mov, ;
 
