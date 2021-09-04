@@ -20,10 +20,10 @@ end-code
 code dup
    r0 dec,
    dph lda,
-   @r0 xsta,
+   @r0 sta,
    r0 dec,
    dpl lda,
-   @r0 xsta,
+   @r0 sta,
    ret,
 end-code
 
@@ -50,27 +50,27 @@ code r@
 end-code
 
 code swap
-   @r0 xlda,
+   @r0 lda,
    r2 sta,
    r0 inc,
-   @r0 xlda,
+   @r0 lda,
    r3 sta,
 label semiswap
    dph lda,
-   @r0 xsta,
+   @r0 sta,
    r0 dec,
    dpl lda,
-   @r0 xsta,
+   @r0 sta,
    r3 dph stm,
    r2 dpl stm,
    ret,
 end-code
 
 code over
-   @r0 xlda,
+   @r0 lda,
    r2 sta,
    r0 inc,
-   @r0 xlda,
+   @r0 lda,
    r3 sta,
    r0 dec,
    r0 dec,
@@ -88,11 +88,11 @@ end-code
 : -   negate [  \ Fall through.
 
 code +
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    dpl add,
    dpl sta,
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    dph addc,
    dph sta,
@@ -100,30 +100,30 @@ code +
 end-code
 
 code xor
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    a dpl xrlm,
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    a dph xrlm,
    ret,
 end-code
 
 code and
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    a dpl anlm,
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    a dph anlm,
    ret,
 end-code
 
 code or
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    a dpl orlm,
-   @r0 xlda,
+   @r0 lda,
    r0 inc,
    a dph orlm,
    ret,
@@ -151,7 +151,7 @@ code 2/
    ret,
 end-code
 
-code @
+code @x \ fetch word from external ram address
    @dptr xlda,
    r2 sta,
    A3 c, \ dptr inc,
@@ -161,14 +161,14 @@ code @
    ret,
 end-code
 
-code c@
+code c@x \ fetch byte from external ram address
    @dptr xlda,
    dpl sta,
    0 # dph movi,
    ret,
 end-code
 
-code c!
+code c!x \ store byte into external ram address
    @r0 xlda,
    @dptr xsta,
    \ Fall through to "2drop".
@@ -181,13 +181,63 @@ code 2drop
 end-code
 
 code drop
-   @r0 xlda,
+   @r0 lda,
    dpl sta,
    r0 inc,
-   @r0 xlda,
+   @r0 lda,
    dph sta,
    r0 inc,
    ret,
+end-code
+
+code c@c \ fetch byte from code memory address
+   a clr,
+   @dptr_clda,
+   dpl sta,
+   0 # dph movi,
+   ret,
+end-code
+
+code @c \ fetch word from code memory address
+   a clr,
+   @dptr_clda,
+   r1 sta,
+   a3 c, \ dptr inc,
+   a clr,
+   @dptr_clda,
+   dph sta,
+   r1 dpl stm,
+   ret,
+end-code
+
+code @ \ fetch word from internal ram address
+  dpl r1 ldm,
+  @r1 dpl stm,
+  r1 inc,
+  @r1 dph stm,
+  ret,
+end-code
+
+code c@ \ fetch byte from internal ram address
+  dpl r1 ldm,
+  @r1 dpl stm,
+  0 # dph movi,
+  ret,
+end-code
+
+code c! \ store byte into internal ram address
+  dpl r1 ldm,
+  @r0 lda,
+  @r1 sta,
+  r0  inc,
+  r0  inc,
+  ' drop ajmp,
+end-code
+
+code execute
+  dpl push,
+  dph push,
+  ' drop ajmp,
 end-code
 
 code >r
@@ -200,9 +250,25 @@ code >r
    ' drop sjmp,
 end-code
 
+\ add into internal ram address value
 : +!   dup >r @ + r> [  \ Fall through.
 
-code !
+code ! \ store word into internal ram address
+  dpl r1 ldm,
+  @r0 lda,
+  @r1 sta,
+  r0  inc,
+  r1  inc,
+  @r0 lda,
+  @r1 sta,
+  r0  inc,
+  ' drop ajmp,
+end-code
+
+\ add into external ram address value
+: +!x   dup >r @ + r> [  \ Fall through.
+
+code !x
    @r0 xlda,
    r0 inc,
    @dptr xsta,
@@ -214,16 +280,16 @@ code !
 end-code
 
 code swap
-   @r0 xlda,
+   @r0 lda,
    r2 sta,
    r0 inc,
-   @r0 xlda,
+   @r0 lda,
    r3 sta,
    dph lda,
-   @r0 xsta,
+   @r0 sta,
    r0 dec,
    dpl lda,
-   @r0 xsta,
+   @r0 sta,
    r3 dph stm,
    r2 dpl stm,
    ret,
