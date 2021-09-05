@@ -24,10 +24,11 @@ fe constant n \ n address
 fc constant x \ x address
 
 : setup  setup-uart
-  0 0 \ Make room for n and x at the bottom of the data stack
   200 n !  100 x ! ;
 : delay  for next ;
 : led-on   01 !p1 300 delay ;
 : led-off   0 !p1 300 delay ;
 \ Jump here from COLD.
-: warm   then setup 01 begin led-off led-on 41 emit key emit cycle again ;
+: warm then
+  dup dup \ Make room for n and x at the bottom of the data stack
+  setup 01 begin led-off led-on 41 emit key emit cycle again ;
