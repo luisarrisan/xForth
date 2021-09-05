@@ -58,7 +58,8 @@ here constant 7seg_digits
 
 : display-digit ( d x -- d>>1 x>>4 )
   0 p1!
-  \ The longer this delay the dimmer the display.
+  \ The longer this delay the dimmer the display
+  \   and the slower the countdown.
   10 for next
   dup f and 7seg_digits + c@c p0!
   swap dup p1! 2/
@@ -66,12 +67,12 @@ here constant 7seg_digits
 
 : display-counter ( n -- )
   \ The longer this loop the slower the countdown.
-  40 begin
+  40 for
     over 8 swap 
     3 for display-digit next
     0 p1!
     2drop 
-  1- dup 0= until 2drop ;
+  next ;
 
 \ Jump here from COLD.
 : hex-countdown then
