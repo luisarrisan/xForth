@@ -266,7 +266,7 @@ code ! \ store word into internal ram address
 end-code
 
 \ add into external ram address value
-: +!x   dup >r @ + r> [  \ Fall through.
+: +!x   dup >r @x + r> [  \ Fall through.
 
 code !x
    @r0 xlda,
