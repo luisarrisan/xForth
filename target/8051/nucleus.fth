@@ -12,7 +12,7 @@ end-code
 
 code cold
    then,
-   FF # r0 movi,
+   0 # r0 movi,
    7 # sp movi,
    ahead, nop,
 end-code
