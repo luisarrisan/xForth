@@ -14,8 +14,7 @@ code cold
    then,
    2 # r0 movi,
    7 # sp movi,
-   0 # dph movi,
-   0 # dpl movi,
+   0 # dptr mov,
    \ After the first dup r0 = r1 = dptr = 0
    ahead, nop,
 end-code
