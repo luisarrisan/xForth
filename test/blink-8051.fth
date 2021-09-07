@@ -24,8 +24,8 @@ fe constant n \ n address
 fc constant x \ x address
 
 : setup  setup-uart
-  \ Make room and initialize n and x at the bottom of the data stack
-  drop 200 100 dup drop ;
+  \ Make room for, and initialize n and x at the bottom of the data stack
+  200 100 ;
 : delay  for next ;
 : led-on   01 !p1 300 delay ;
 : led-off   0 !p1 300 delay ;
